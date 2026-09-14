@@ -2,6 +2,8 @@
 
 本檔案為本專案的開發規範，Claude 每次協作時皆會自動載入並遵循。
 
+> 本檔為通用預設；各專案可在自己的 CLAUDE.md 記錄專案特有的例外與放寬，以專案版為準。
+
 ## 專案概述
 
 - 後端服務，技術棧：Python 3.11+ + FastAPI。
@@ -55,7 +57,7 @@ tests/
 ## 程式風格
 
 ### 語言與工具鏈
-- Python 3.11+；所有函式簽名必須有 type hints，不允許裸露的 `Any`
+- Python 3.11+；所有函式簽名必須有 type hints；避免裸露的 `Any`，但無法用 union 增加安全性的異質 payload 可用 `Any`
 - 格式化與 lint 統一用 `ruff`（`ruff format` + `ruff check`），提交前必須零錯誤；ruff 規則設定見 `pyproject.toml` 的 `[tool.ruff]`
 - lint/格式在 `git commit` 時由 pre-commit 自動執行並擋關（設定見 `.pre-commit-config.yaml`）；首次需執行 `pre-commit install`
 - import 排序交給 ruff，不要手動調整；不使用相對 import，一律絕對 import
@@ -72,7 +74,7 @@ tests/
 - 路由函式只做「參數驗證 → 呼叫 service → 回傳」，商業邏輯一律放 service 層，不寫在 router 裡
 - 依賴注入用 `Depends`，不要在函式內自行建立 DB session / client
 - 所有 I/O（DB、外部 API）一律用 async；不要在 async 路由裡呼叫同步阻塞函式
-- response_model 一定要明確指定，不要回傳未經 schema 過濾的 ORM 物件
+- 回傳資料的端點一律明確指定 response_model，不要回傳未經 schema 過濾的 ORM 物件；健康檢查／狀態探針類端點回固定結構的裸 dict 可接受
 - 路徑用複數名詞（`/users`、`/users/{id}`），不要動詞化路徑
 
 ### 錯誤處理
