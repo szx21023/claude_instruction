@@ -17,6 +17,41 @@
 - 自動修正：`ruff check --fix . && ruff format .`
 - 手動對所有檔案跑 pre-commit：`pre-commit run --all-files`
 
+## 專案架構
+
+採**功能導向（feature-based）分層**：先按功能切模組，每個模組內部再分 router / service / schema 層。
+
+### 目錄結構（約定，實作時照此建立）
+```
+app/
+├── main.py            # FastAPI 進入點：建立 app、掛 router、註冊 exception handler、lifespan
+├── config.py          # pydantic-settings 設定（get_settings 單例）
+├── exceptions.py      # 自訂例外基底 + 統一 exception handler
+├── dependencies.py    # 共用依賴（分頁、目前使用者…）
+├── core/              # 跨功能基礎設施（logging、security、middleware）
+└── modules/           # 每個功能一個資料夾，內部自成分層
+    └── <feature>/
+        ├── router.py      # 路由：只做參數驗證 → 呼叫 service → 回傳
+        ├── service.py     # 商業邏輯
+        ├── schemas.py     # Pydantic 輸入/輸出
+        ├── repository.py  # DB 存取（可選；邏輯簡單時可先併進 service）
+        ├── models.py      # ORM 模型（接 DB 後才需要）
+        └── exceptions.py  # 該功能專屬例外（可選）
+
+tests/
+├── conftest.py        # 共用 fixtures（test client 等）
+└── modules/
+    └── test_<feature>.py
+```
+> 註：目前尚未接 DB，`repository.py` / `models.py` 待導入資料層時再建。
+
+### 架構規則
+- **依賴方向單向**：`router → service → repository → model`，不可反向（service 不 import router）
+- **schema 與 model 分離**：對外一律回 `schemas.py` 的 Pydantic 型別，不直接吐 ORM 物件
+- **跨模組互動走 service**：A 模組要用 B 模組時，呼叫 `b.service`，不要直接碰 `b.models` / `b.repository`
+- **router 保持薄**：不在 router 寫商業邏輯，也不在 router 直接建立 DB session / client
+- **避免過度設計**：`repository.py` 在 CRUD 很薄時可先併進 service，等 DB 邏輯變複雜再抽出
+
 ## 程式風格
 
 ### 語言與工具鏈
