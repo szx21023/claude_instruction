@@ -1,0 +1,47 @@
+[project]
+name = "claude-instruction"
+version = "0.1.0"
+description = "FastAPI backend service"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "pydantic>=2",
+    "pydantic-settings",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project.optional-dependencies]
+dev = [
+    "ruff==0.6.9",  # 與 .pre-commit-config.yaml 的 rev 對齊，避免版本漂移
+    "pytest",
+    "pytest-asyncio",
+    "httpx",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+# E,F = pyflakes / pycodestyle   I = isort         B = flake8-bugbear
+# UP  = pyupgrade                ASYNC = async 陷阱  SIM = flake8-simplify
+# C4  = comprehensions           N = pep8-naming   RUF = ruff 專屬規則
+select = ["E", "F", "I", "B", "UP", "ASYNC", "SIM", "C4", "N", "RUF"]
+ignore = [
+    "B008",  # FastAPI 的 Depends() 放在預設參數是正常用法
+]
+
+[tool.ruff.lint.isort]
+force-single-line = false
+known-first-party = ["app"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
