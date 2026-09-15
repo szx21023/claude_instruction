@@ -67,7 +67,7 @@ tests/
 - 變數/函式：snake_case；類別：PascalCase；常數：UPPER_SNAKE
 - 變數名稱用完整單字，不要用縮寫或單一字元（用 `ticket` 不要用 `t`、用 `index` 不要用 `i`）；例外：慣用的 loop 計數短名視情況可接受，但有語意時一律用完整單字
 - 布林值用 is_/has_/should_ 開頭（如 is_active）
-- Pydantic schema 命名：輸入用 `XxxCreate` / `XxxUpdate`，輸出用 `XxxRead` / `XxxResponse`
+- Pydantic schema 命名：類別名稱一律以 `Schema` 結尾（如 `XxxRequestSchema` / `XxxResponseSchema`）；語意仍用 `Xxx(Create|Update|Request)` 表輸入、`Xxx(Read|Response)` 表輸出，後接 `Schema`
 - 私有成員以單底線開頭 `_internal`
 
 ### FastAPI 慣例
