@@ -16,7 +16,7 @@ build-backend = "setuptools.build_meta"
 
 [project.optional-dependencies]
 dev = [
-    "ruff==0.6.9",  # 與 .pre-commit-config.yaml 的 rev 對齊，避免版本漂移
+    "ruff==0.16.10",  # 與 .pre-commit-config.yaml 的 rev 對齊，避免版本漂移
     "pytest",
     "pytest-asyncio",
     "httpx",
